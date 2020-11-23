@@ -27,3 +27,5 @@ Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->midd
 
 Route::get('/conversation/{id}', [App\Http\Controllers\MessageController::class, 'conversation'])->middleware('cors')->name('message.conversation');
 
+
+Route::post('send-message',[App\Http\Controllers\MessageController::class, 'sendMessage'])->name('message.send-message');

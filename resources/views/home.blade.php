@@ -45,7 +45,6 @@
 
 @section('scripts')
 
-
     <script>
         $(function(){
             // var socket = io();
@@ -54,7 +53,8 @@
             var socket_port = '7005';
             var socket = io(ip_address + ':' + socket_port);
 
-            // alert(socket);
+
+
             // alert(user_id);
             socket.on('connect',function(){
                 // alert('hello'); 
@@ -67,6 +67,10 @@
                 // alert(data);
                 $.each(data, function(key,val)
                 {
+                    let $userIcon= $('.user-status-icon');
+                    $userIcon.removeClass('text-success');
+                    $userIcon.attr('title','Away');
+
                     console.log(key,val);
 
                     if(val!== 0 && val!==null)
@@ -84,9 +88,7 @@
             
 
         })
-                
-                
-            
+                 
                 
 
 

@@ -15,7 +15,8 @@
                                     
                                     <div class="chat-image">
                                         {!!  makeImageForname($user->name) !!}
-                                        <i class="fa fa-circle user-status-icon" title="away"></i>
+                                        <i class="fa fa-circle user-status-icon user-icon-{{$user->id}}" title="away"></i>
+
                                     </div>
                                     
                                     {{$user->name}}</a>
@@ -98,11 +99,101 @@
 @endsection
 
 
-@push('scripts')
+@section('scripts')
 
 
-    <script>
-       
-    </script>
+<script>
+    $(function(){
+        // var socket = io();
+
+        let $chatInput =  $('.chat-input');
+        let $chatInputtoolbar = $('.chat-inpu-toolbar');
+        let $chatBody = $('.chat-body');
+
+        let user_id = "{{ auth()->user()->id }}";
+        var ip_address = '127.0.0.1';
+        var socket_port = '7005';
+        var socket = io(ip_address + ':' + socket_port);
+        let friendId = " {{  $friendInfo->id }}  ";
+
+        // alert(socket);
+        // alert(user_id);
+        socket.on('connect',function(){
+            // alert('hello'); 
+            socket.emit('user_connected',user_id);
+        });
+
+
+        socket.on('updateUserStatus',(data)=>{
+
+            // alert(data);
+            $.each(data, function(key,val)
+            {
+                let $userIcon= $('.user-status-icon');
+                $userIcon.removeClass('text-success');
+                $userIcon.attr('title','Away');
+
+                // console.log(key,val);
+
+                if(val!== 0 && val!==null)
+                {
+                    // console.log(key,val);
+                    let userIcon = $('.user-icon-'+key);
+                    // console.log(userIcon);
+                    userIcon.addClass('text-success');
+                    userIcon.attr('title','Online');
+                }
+            })
+        });
+
+        $chatInput.keypress(function(e)
+        {
+            let message = $(this).html();
+            if(e.which===13 )
+            {
+                $chatInput.html('');
+                sendMessage(message);
+                return false;
+            }
+        });
+
+        function sendMessage(message)
+        {
+            let url = "{{ route('message.send-message') }}";
+                let form = $(this);
+                let formData = new FormData();
+                let token = "{{ csrf_token() }}";
+                formData.append('message', message);
+                formData.append('_token', token);
+                formData.append('receiver_id', friendId);
+
+            // console.log(token);
+
+            $.ajax({
+                   url: url,
+                   type: 'POST',
+                   data: formData,
+                    processData: false,
+                    contentType: false,
+                    dataType: 'JSON',
+                   success: function (response) {
+                       if (response.success) {
+                           console.log(response.data);
+                       }
+                   }
+                });
+
+
+
+
+        }
+
+
+        
+
+    })
+            
+         
+</script>
     
-@endpush
+@endsection
