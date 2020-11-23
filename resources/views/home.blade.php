@@ -77,7 +77,7 @@
                     {
                         // console.log(key,val);
                         let userIcon = $('.user-icon-'+key);
-                        // console.log(userIcon);
+                        console.log(userIcon);
                         userIcon.addClass('text-success');
                         userIcon.attr('title','Online');
                     }

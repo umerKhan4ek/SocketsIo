@@ -3,12 +3,26 @@ var app = require('express')();
 var http = require('http').createServer(app);
 var io = require('socket.io')(http);
 var users = [];
-
+var Redis = require('ioredis');
+var redis = new Redis();
 
 
 http.listen(7005, () => {
     console.log('listening on');
   });
+
+redis.subscribe('private-channel', function()
+{
+    console.log('channel subscribed');
+})
+
+redis.on('message',function(channel,message){
+
+    console.log(channel)
+    console.log(message)
+})
+
+
 io.on('connection' , function(socket){
     socket.on("user_connected",function(user_id){
 
